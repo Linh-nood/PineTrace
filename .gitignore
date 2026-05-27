@@ -39,3 +39,24 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Python environment
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Local env files
+.env.local
+.env.*.local
+
+# Supabase
+supabase/.temp/
+supabase/migrations/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
