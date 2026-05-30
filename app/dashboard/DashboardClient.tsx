@@ -47,13 +47,6 @@ export default function DashboardClient({
   const isStravaConnected = profile?.strava_access_token ? true : false;
   const hasActivities = activities.length > 0;
 
-  // Tự động đồng bộ khi vào Dashboard lần đầu nếu chưa có hoạt động
-  useEffect(() => {
-    if (isStravaConnected && !hasActivities && !isSyncing) {
-      handleAutoSync();
-    }
-  }, []);
-
   const handleAutoSync = async () => {
     setIsSyncing(true);
     setSyncStatus('Đang đồng bộ hoạt động từ Strava...');
@@ -81,6 +74,13 @@ export default function DashboardClient({
       setIsSyncing(false);
     }
   };
+
+  // Tự động đồng bộ khi vào Dashboard lần đầu nếu chưa có hoạt động
+  useEffect(() => {
+    if (isStravaConnected && !hasActivities && !isSyncing) {
+      handleAutoSync();
+    }
+  }, [isStravaConnected, hasActivities, isSyncing]);
 
   // Tính toán thống kê
   const totalDistance = activities.reduce((sum, act) => sum + act.distance, 0);
