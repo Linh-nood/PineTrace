@@ -47,7 +47,7 @@ export default function ProfileClient({
         router.refresh()
       }, 1000)
     } else {
-      setMessage({ type: 'error', text: result.error })
+      setMessage({ type: 'error', text: result.error ?? 'Lỗi cập nhật hồ sơ' })
     }
     setIsLoading(false)
   }
