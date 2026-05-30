@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '../../../utils/supabase/server';
+import { getValidStravaToken } from '../../../utils/strava-api';
 
 export async function GET(request: Request) {
   return handleSync(request);
@@ -18,23 +19,19 @@ async function handleSync(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // 2. Lấy Strava Token từ bảng profiles
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('strava_access_token')
-    .eq('id', user.id)
-    .single();
-
-  if (!profile?.strava_access_token) {
-    return NextResponse.json({ 
-      error: 'Chưa kết nối Strava. Vui lòng kết nối tài khoản Strava trước.' 
-    }, { status: 400 });
-  }
-
   try {
+    // 2. Lấy valid Strava token (tự động refresh nếu hết hạn)
+    const stravaToken = await getValidStravaToken(user.id);
+    
+    if (!stravaToken) {
+      return NextResponse.json({ 
+        error: 'Chưa kết nối Strava. Vui lòng kết nối tài khoản Strava trước.' 
+      }, { status: 400 });
+    }
+
     // 3. Gọi Strava API lấy hoạt động
     const response = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=50', {
-      headers: { 'Authorization': `Bearer ${profile.strava_access_token}` }
+      headers: { 'Authorization': `Bearer ${stravaToken}` }
     });
 
     if (!response.ok) {

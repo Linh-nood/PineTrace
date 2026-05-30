@@ -34,12 +34,14 @@ export async function GET(request: Request) {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (user) {
-      // 3. Cập nhật Token vào bảng profiles
+      // 3. Cập nhật Token vào bảng profiles (lưu cả expires_at)
       const { error: updateError } = await supabase
         .from('profiles')
         .update({
           strava_access_token: data.access_token,
           strava_refresh_token: data.refresh_token,
+          strava_token_expires_at: new Date(Date.now() + data.expires_in * 1000).toISOString(),
+          strava_athlete_id: data.athlete?.id,
         })
         .eq('id', user.id);
 

@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   email TEXT NOT NULL,
   strava_access_token TEXT,
   strava_refresh_token TEXT,
+  strava_token_expires_at TIMESTAMP,
   strava_athlete_id BIGINT,
   created_at TIMESTAMP DEFAULT now(),
   updated_at TIMESTAMP DEFAULT now()
