@@ -41,7 +41,7 @@ export default function ProfileClient({
     const result = await updateProfile(formData)
 
     if (result.success) {
-      setMessage({ type: 'success', text: result.message })
+      setMessage({ type: 'success', text: result.message ?? 'Cập nhật thành công' })
       setIsEditMode(false)
       setTimeout(() => {
         router.refresh()
