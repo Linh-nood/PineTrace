@@ -2,14 +2,14 @@ import { createClient } from '../../../utils/supabase/server'
 import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     // Xóa Strava tokens khỏi database
     const { error } = await supabase
       .from('profiles')
@@ -21,13 +21,15 @@ export async function POST(request: Request) {
       .eq('id', user.id)
 
     if (error) {
-      console.error('Lỗi cập nhật database:', error)
-      return NextResponse.json({ error: 'Lỗi cập nhật database' }, { status: 500 })
+      console.error('Database update error:', error)
+      return NextResponse.json({ error: error.message || 'Lỗi cập nhật database' }, { status: 500 })
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, message: 'Đã ngắt kết nối Strava' })
   } catch (error) {
-    console.error('Lỗi:', error)
-    return NextResponse.json({ error: 'Lỗi server' }, { status: 500 })
+    console.error('Disconnect error:', error)
+    return NextResponse.json({ 
+      error: error instanceof Error ? error.message : 'Lỗi server' 
+    }, { status: 500 })
   }
 }

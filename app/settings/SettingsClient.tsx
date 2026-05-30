@@ -26,15 +26,22 @@ export default function SettingsClient({
 
   const handleDisconnectStrava = async () => {
     if (confirm('Bạn chắc chắn muốn ngắt kết nối Strava?')) {
-      const response = await fetch('/api/settings/disconnect-strava', {
-        method: 'POST',
-      })
+      try {
+        const response = await fetch('/api/settings/disconnect-strava', {
+          method: 'POST',
+        })
 
-      if (response.ok) {
-        alert('Đã ngắt kết nối Strava')
-        router.refresh()
-      } else {
-        alert('Lỗi khi ngắt kết nối')
+        const data = await response.json()
+
+        if (response.ok) {
+          alert('Đã ngắt kết nối Strava')
+          router.refresh()
+        } else {
+          alert(`Lỗi khi ngắt kết nối: ${data.error || 'Lỗi không xác định'}`)
+        }
+      } catch (error) {
+        console.error('Disconnect error:', error)
+        alert('Lỗi khi ngắt kết nối: Không thể kết nối tới server')
       }
     }
   }
