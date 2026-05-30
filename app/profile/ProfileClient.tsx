@@ -62,10 +62,10 @@ export default function ProfileClient({
     if (result.success) {
       // Redirect to login after account deletion
       setTimeout(() => {
-        router.push('/login?success=' + encodeURIComponent(result.message))
+        router.push('/login?success=' + encodeURIComponent(result.message ?? 'Xoá tài khoản thành công'))
       }, 1000)
     } else {
-      setMessage({ type: 'error', text: result.error })
+      setMessage({ type: 'error', text: result.error ?? 'Không thể xoá tài khoản' })
       setIsLoading(false)
     }
   }
